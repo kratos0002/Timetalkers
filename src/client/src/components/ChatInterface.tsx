@@ -1,4 +1,4 @@
-// src/client/components/ChatInterface.tsx
+// src/client/src/components/ChatInterface.tsx
 import { useState } from 'react';
 
 export const socratesCharacter = {
@@ -23,9 +23,13 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat/message', {
+      console.log('Sending request to:', import.meta.env.VITE_API_URL || '/api');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/chat/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
           content: inputText,
           character: socratesCharacter,
@@ -33,10 +37,18 @@ export function ChatInterface() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
       const data = await response.json();
       setMessages(prev => [...prev, { content: data.response, sender: 'bot' }]);
     } catch (error) {
       console.error('Error:', error);
+      setMessages(prev => [...prev, { 
+        content: 'Sorry, I encountered an error. Please try again.', 
+        sender: 'bot' 
+      }]);
     } finally {
       setIsLoading(false);
     }
