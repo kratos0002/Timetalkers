@@ -2,9 +2,10 @@
   "name": "historical-dialogues",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "dev:client": "vite",
-    "dev:server": "ts-node-dev --respawn --transpile-only src/server/index.ts",
+    "dev:server": "node src/server/index.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -31,7 +32,6 @@
     "nodemon": "^3.0.2",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.11"
   }

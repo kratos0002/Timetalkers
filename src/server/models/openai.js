@@ -1,28 +1,16 @@
-// src/server/models/openai.js
-const OpenAI = require('openai');
-const dotenv = require('dotenv');
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-class OpenAIModelService {
+export class OpenAIModelService {
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
-    
     if (!apiKey) {
-      throw new Error(
-        'OpenAI API key is missing. Please set the OPENAI_API_KEY environment variable.'
-      );
+      throw new Error('OpenAI API key is missing. Please set the OPENAI_API_KEY environment variable.');
     }
-
-    try {
-      this.openai = new OpenAI({
-        apiKey: apiKey,
-      });
-      this.name = 'OpenAI GPT-4';
-    } catch (error) {
-      console.error('Error initializing OpenAI client:', error);
-      throw new Error('Failed to initialize OpenAI client');
-    }
+    this.openai = new OpenAI({ apiKey });
+    this.name = 'OpenAI GPT-4';
   }
 
   async generateResponse(prompt, context) {
@@ -38,13 +26,9 @@ class OpenAIModelService {
             role: msg.sender === 'user' ? 'user' : 'assistant',
             content: msg.content
           })),
-          {
-            role: "user",
-            content: prompt
-          }
+          { role: "user", content: prompt }
         ],
       });
-
       return response.choices[0]?.message?.content || 'No response generated';
     } catch (error) {
       console.error('Error generating response:', error);
@@ -61,5 +45,3 @@ class OpenAIModelService {
     };
   }
 }
-
-module.exports = { OpenAIModelService };

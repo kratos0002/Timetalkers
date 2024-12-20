@@ -1,33 +1,12 @@
-const express = require('express');
-const { OpenAIModelService } = require('../models/openai');
-const { z } = require('zod');
+import express from 'express';
+import { OpenAIModelService } from '../models/openai.js';
 
 const router = express.Router();
 const modelService = new OpenAIModelService();
 
-const MessageSchema = z.object({
-  content: z.string(),
-  character: z.object({
-    id: z.string(),
-    name: z.string(),
-    basePrompt: z.string(),
-  }),
-  context: z.array(z.object({
-    content: z.string(),
-    sender: z.enum(['user', 'character']),
-  })),
-});
-
 router.post('/message', async (req, res) => {
   try {
-    const validation = MessageSchema.safeParse(req.body);
-    
-    if (!validation.success) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-
     const { content, character, context } = req.body;
-    
     const response = await modelService.generateResponse(content, {
       character,
       messageHistory: context,
@@ -37,7 +16,6 @@ router.post('/message', async (req, res) => {
         characterId: character.id,
       },
     });
-
     res.json({ response });
   } catch (error) {
     console.error('Error processing message:', error);
@@ -45,4 +23,4 @@ router.post('/message', async (req, res) => {
   }
 });
 
-module.exports = { chatRouter: router };
+export const chatRouter = router;
