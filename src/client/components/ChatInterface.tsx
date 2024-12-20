@@ -1,5 +1,5 @@
 // src/client/components/ChatInterface.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const socratesCharacter = {
   id: 'socrates',
