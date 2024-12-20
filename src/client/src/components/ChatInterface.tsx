@@ -22,29 +22,39 @@ export function ChatInterface() {
     setInputText('');
     setIsLoading(true);
 
+    const payload = {
+      content: inputText,
+      character: socratesCharacter,
+      context: messages
+    };
+
     try {
-      console.log('Sending request to:', import.meta.env.VITE_API_URL || '/api');
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/chat/message`, {
+      console.log('Attempting to send request to:', '/api/chat/message');
+      console.log('Request payload:', payload);
+      
+      const response = await fetch('https://timetalkers.onrender.com/api/chat/message', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          content: inputText,
-          character: socratesCharacter,
-          context: messages
-        })
+        body: JSON.stringify(payload)
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Response data:', data);
+      
       setMessages(prev => [...prev, { content: data.response, sender: 'bot' }]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error details:', error);
       setMessages(prev => [...prev, { 
         content: 'Sorry, I encountered an error. Please try again.', 
         sender: 'bot' 
